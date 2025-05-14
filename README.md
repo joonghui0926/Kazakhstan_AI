@@ -11,28 +11,28 @@
 ## 파일 구성
 
 ### Session1_Perceptron_Backprop.py
-- XOR 문제를 해결하며 퍼셉트론과 다층 퍼셉트론(MLP)의 작동 원리와 학습 알고리즘(backpropagation)을 실습합니다.
+XOR 문제를 해결하며 퍼셉트론과 다층 퍼셉트론(MLP)의 작동 원리와 학습 알고리즘(backpropagation)을 실습합니다.
 
 ### Session2_CNN_Visualization.py
-- MNIST 데이터를 기반으로 간단한 CNN 구조를 구현하고, 합성곱 필터 시각화를 통해 이미지 특징 추출 원리를 이해합니다.
+MNIST 데이터를 기반으로 간단한 CNN 구조를 구현하고, 합성곱 필터 시각화를 통해 이미지 특징 추출 원리를 이해합니다.
 
 ### Session3_UserImageClassifier.py
-- 학생이 직접 수집한 이미지 데이터를 활용해 사용자 정의 이미지 분류기를 설계하고 학습시킵니다.
+학생이 직접 수집한 이미지 데이터를 활용해 사용자 정의 이미지 분류기를 설계하고 학습시킵니다.
 
 ### Session4_RNN_LSTM_Sentiment.py
-- 시계열 데이터와 텍스트 데이터를 다루기 위한 RNN 및 LSTM 구조를 구현하고, 감정 분류 문제를 실습합니다.
+시계열 데이터와 텍스트 데이터를 다루기 위한 RNN 및 LSTM 구조를 구현하고, 감정 분류 문제를 실습합니다.
 
 ### Session5_NLP_Token_Embedding.py
-- 토큰화(Tokenization)와 임베딩(Embedding)의 개념을 실습하고, 문장을 벡터로 변환하는 방법을 체험합니다.
+토큰화(Tokenization)와 임베딩(Embedding)의 개념을 실습하고, 문장을 벡터로 변환하는 방법을 체험합니다.
 
 ### Session6_Transformer_Attention.py
-- Transformer 구조의 핵심인 Scaled Dot-Product Attention을 직접 구현하고, 입력 벡터 간의 연관성을 계산하는 과정을 실험합니다.
+Transformer 구조의 핵심인 Scaled Dot-Product Attention을 직접 구현하고, 입력 벡터 간의 연관성을 계산하는 과정을 실험합니다.
 
 ### Session7_GPT2_TextGeneration.py
-- HuggingFace 라이브러리를 활용하여 GPT-2 기반 텍스트 생성 모델을 실행하고, 다양한 프롬프트에 따른 출력 결과를 실험합니다.
+HuggingFace 라이브러리를 활용하여 GPT-2 기반 텍스트 생성 모델을 실행하고, 다양한 프롬프트에 따른 출력 결과를 실험합니다.
 
 ### Session8_Project_Template.py
-- 최종 프로젝트 진행을 위한 템플릿으로, 모델 설계 및 학습, 결과 시각화, 발표 준비 흐름을 안내합니다.
+최종 프로젝트 진행을 위한 템플릿으로, 모델 설계 및 학습, 결과 시각화, 발표 준비 흐름을 안내합니다.
 
 ## 실행 방법
 
