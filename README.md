@@ -1,5 +1,3 @@
-# Kazakhstan_AI
-
 # KAIST AI Camp Code (Kazakhstan NIS, Summer 2025)
 
 본 저장소는 KAIST 글로벌 봉사단 AI팀이 카자흐스탄 알마티 나자르바예프 영재학교(NIS)를 대상으로 진행하는 AI 교육 프로그램의 실습 코드 모음입니다. 각 파일은 8차시 수업 구성에 맞춰 순서대로 정리되어 있으며, Google Colab 환경에서 실행 가능하도록 작성되었습니다.
