@@ -1,0 +1,47 @@
+import time
+from maix import GPIO
+from fpioa_manager import fm
+
+
+class Button():
+    def __init__(self,pin_number,fm_gpio,gpio):
+        fm.register(pin_number, fm_gpio, force=True)
+        self.button = GPIO(//)
+        # Set the mapped internal pin to input mode and store it in self.button #
+        self.prev_button = //
+        # Initilize a variable to store the previous state of the button #
+
+    def get_button(self):
+        curr_button = self.button.value()
+        if self.prev_button != curr_button:
+            self.prev_button = curr_button
+            if //
+            # Button press detectioin #
+                time.sleep(0.1)
+                return True
+            time.sleep(0.1)
+        return False
+
+
+ccamera_button_right = Button(//)
+## Pass the pin number, fm_gpio, and GPIO pin to camera_button_right #
+ccamera_button_center = Button(//)
+## Pass the pin number, fm_gpio, and GPIO pin to camera_button_center #
+ccamera_button_left = Button(//)
+## Pass the pin number, fm_gpio, and GPIO pin to camera_button_left #
+
+while True:
+    if //:
+        # Detect click on camera_button_right #
+        print("right click")
+        time.sleep(0.1)
+
+    if //:
+        # Detect click on camera_button_center #
+        print("center click")
+        time.sleep(0.1)
+
+    if //:
+        # Detect click on camera_button_left #
+        print("left click")
+        time.sleep(0.1)
