@@ -1,0 +1,49 @@
+import sensor, image, time, math, lcd
+import time
+from maix import GPIO
+from fpioa_manager import fm
+
+
+fm.register(8, fm.fpioa.GPIO0, force=True)
+fm.register(9, fm.fpioa.GPIO1, force=True)
+fm.register(11, fm.fpioa.GPIO2, force=True)
+fm.register(10, fm.fpioa.GPIO3, force=True)
+
+button_1 = GPIO(GPIO.GPIO0, GPIO.IN, GPIO.PULL_UP)
+button_2 = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
+button_3 = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
+button_4 = GPIO(GPIO.GPIO3, GPIO.IN, GPIO.PULL_UP)
+
+
+lcd.init()
+img = image.Image()
+img.clear()
+
+
+
+while True:
+    curr_button_1 = button_1.value()
+    if curr_button_1 == 0:
+        print("button_1")
+        img.clear()
+        img.draw_string(50,100, "BUTTON 1", color=(255, 0, 0), scale=4)
+        lcd.display(img)
+        time.sleep(0.1)
+
+    curr_button_2 = button_2.value()
+    //
+   
+    # When button_2 is pressed, print the message "button_2" and display "BUTTON_2" on the LCD #
+        time.sleep(0.1)
+
+    curr_button_3 = button_3.value()
+    //
+   
+    # When button_3 is pressed, print the message "button_3" and display "BUTTON_3" on the LCD #
+        time.sleep(0.1)
+
+    curr_button_4 = button_4.value()
+    //
+   
+    # When button_4 is pressed, print the message "button_4" and display "BUTTON_4" on the LCD #
+        time.sleep(0.1)
