@@ -1,0 +1,48 @@
+<2-5-3>
+
+import time
+from maix import GPIO
+from fpioa_manager import fm
+from board import board_info
+from machine import Timer, PWM
+
+#set up the timer as a PWM mode
+tim0 = Timer(Timer.TIMER0, Timer.CHANNEL0, mode=Timer.MODE_PWM)
+tim1 = Timer(Timer.TIMER0, Timer.CHANNEL1, mode=Timer.MODE_PWM)
+tim2 = Timer(Timer.TIMER0, Timer.CHANNEL2, mode=Timer.MODE_PWM)
+tim3 = Timer(Timer.TIMER0, Timer.CHANNEL3, mode=Timer.MODE_PWM)
+
+#create PWM objects to control four motors
+left_ia = PWM(tim0, freq=2000, duty=0, pin=13)
+left_ib = PWM(tim1, freq=2000, duty=0, pin=19)
+right_ia = PWM(tim2, freq=2000, duty=0, pin=10)
+right_ib = PWM(tim3, freq=2000, duty=0, pin=17)
+
+while True:
+    #move the car forward
+    print("go")
+    left_ia.duty(__)
+    left_ib.duty(__)
+    right_ia.duty(__)
+    right_ib.duty(__)
+    time.sleep(1.0)
+
+    left_ia.duty(0)
+    left_ib.duty(0)
+    right_ia.duty(0)
+    right_ib.duty(0)
+    time.sleep(0.5)
+
+    #move the car backward
+    print("back")
+    left_ia.duty(__)
+    left_ib.duty(__)
+    right_ia.duty(__)
+    right_ib.duty(__)
+    time.sleep(1.0)
+
+    left_ia.duty(0)
+    left_ib.duty(0)
+    right_ia.duty(0)
+    right_ib.duty(0)
+    time.sleep(0.5)
