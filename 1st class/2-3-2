@@ -1,0 +1,44 @@
+<2-3-2>
+
+from machine import Timer,PWM
+import time
+
+#create the timer channel for PWM output
+#reset the buzzer
+tim = Timer(____________________________________)
+buzzer = PWM(tim, freq=1, duty=50, pin=14)
+
+#melody of the song
+notes = [
+    392, 392, 440, 440,
+    392, 392, 330, 392,
+    392, 330, 330, 293,
+    0,
+    392, 392, 440, 440,
+    392, 392, 329, 392,
+    329, 293, 329, 261,
+    0
+]
+
+def play_tone(frequency):
+    #play a note with a frequency given by duty 50
+    buzzer.________
+    buzzer.___________
+
+def no_tone():
+    #make the buzzer not sound
+    buzzer._______
+
+no_tone()
+time.sleep(1.0)
+
+while True:
+    for ____________:
+        if note != 0:
+            play_tone(____)
+            time.sleep(0.25)
+            no_tone()
+            time.sleep(0.3)
+        else:
+            no_tone()
+            time.sleep(0.3)
