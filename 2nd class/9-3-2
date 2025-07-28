@@ -1,0 +1,31 @@
+import _thread
+import time
+from maix import GPIO
+from fpioa_manager import fm
+from board import board_info
+
+fm.register(12, fm.fpioa.GPIO0, force=True)
+fm.register(15, fm.fpioa.GPIO1, force=True)
+fm.register(14, fm.fpioa.GPIO2, force=True)
+fm.register(17, fm.fpioa.GPIO3, force=True)
+
+led_1 = GPIO(GPIO.GPIO0, GPIO.OUT)
+led_2 = GPIO(GPIO.GPIO1, GPIO.OUT)
+led_3 = GPIO(GPIO.GPIO2, GPIO.OUT)
+led_4 = GPIO(GPIO.GPIO3, GPIO.OUT)
+
+def blink_led(led, interval):
+    while True:
+        //
+       
+# Write a function that alternately turns the given LED on and off at the given interval #
+
+# Start a thread to control each LED #
+_thread.start_new_thread(blink_led, (led_1, 0.3))
+_thread.start_new_thread(blink_led, (led_2, 1.3))
+_thread.start_new_thread(blink_led, (led_3, 0.7))
+_thread.start_new_thread(blink_led, (led_4, 1.5))
+
+# An infinite loop to prevent the main thread from exiting #
+while True:
+    pass
