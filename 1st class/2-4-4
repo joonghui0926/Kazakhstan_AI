@@ -1,0 +1,36 @@
+<2-4-4>
+
+import time
+from maix import GPIO
+from fpioa_manager import fm
+
+class Button():
+    def __init__(self,pin_number,fm_gpio,gpio):
+        fm.register(pin_number, fm_gpio, force=True)
+        self.button = GPIO(gpio, GPIO.IN, GPIO.PULL_UP)
+        self.prev_button = 1
+
+    def get_button(self):
+        curr_button = self.button.value()
+        #return true if the button is pressed, otherwise return false
+        if self.prev_button != curr_button:
+            self.prev_button = curr_button
+            if curr_button == 0:
+                return True
+            time.sleep(0.1) #prevent chattering
+        return False
+
+button_1 = Button(9,fm.fpioa.GPIO0,GPIO.GPIO0)
+button_2 = Button(12,fm.fpioa.GPIO1,GPIO.GPIO1)
+button_3 = Button(8,fm.fpioa.GPIO2,GPIO.GPIO2)
+
+while True:
+    #output a click massage each time the button is pressed
+    if __________________:
+        print("button_1 click")
+
+    if __________________:
+        print("button_2 click")
+
+    if __________________:
+        print("button_3 click")
