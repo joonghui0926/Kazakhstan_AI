@@ -1,0 +1,73 @@
+<2-7-3>
+
+import time
+from machine import UART,Timer,PWM
+from fpioa_manager import fm
+from maix import GPIO, utils
+
+#시리얼통신 설정
+fm.register(7, fm.fpioa.UART1_RX, force=True)
+fm.register(6, fm.fpioa.UART1_TX, force=True)
+
+uart = UART(UART.UART1, 115200, read_buf_len=4096)
+
+#모터 설정
+tim0 = Timer(Timer.TIMER0, Timer.CHANNEL0, mode=Timer.MODE_PWM)
+tim1 = Timer(Timer.TIMER0, Timer.CHANNEL1, mode=Timer.MODE_PWM)
+tim2 = Timer(Timer.TIMER0, Timer.CHANNEL2, mode=Timer.MODE_PWM)
+tim3 = Timer(Timer.TIMER0, Timer.CHANNEL3, mode=Timer.MODE_PWM)
+
+left_ia = PWM(tim0, freq=2000, duty=0, pin=13)
+left_ib = PWM(tim1, freq=2000, duty=0, pin=19)
+right_ia = PWM(tim2, freq=2000, duty=0, pin=10)
+right_ib = PWM(tim3, freq=2000, duty=0, pin=17)
+
+def car_go(speed):
+    left_ia.duty(0)
+    left_ib.duty(speed)
+    right_ia.duty(speed)
+    right_ib.duty(0)
+
+def car_back(speed):
+    left_ia.duty(speed)
+    left_ib.duty(0)
+    right_ia.duty(0)
+    right_ib.duty(speed)
+
+def car_left(speed):
+    left_ia.duty(speed)
+    left_ib.duty(0)
+    right_ia.duty(speed)
+    right_ib.duty(0)
+
+def car_right(speed):
+    left_ia.duty(0)
+    left_ib.duty(speed)
+    right_ia.duty(0)
+    right_ib.duty(speed)
+
+car_go(0)
+
+while True:
+    try:
+        if uart.any():
+            text=uart.read()
+            in_text = text.decode('utf-8')
+            if "f" in in_text:
+                #print("car go")
+                car_go(50)
+            elif "b" in in_text:
+                #print("car back")
+                car_back(50)
+            elif "l" in in_text:
+                #print("car left")
+                car_left(50)
+            elif "r" in in_text:
+                #print("car right")
+                car_right(50)
+            elif "s" in in_text:
+                #print("car stop")
+                car_go(0)
+
+    except:
+        pass
