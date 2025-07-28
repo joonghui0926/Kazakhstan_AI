@@ -1,0 +1,16 @@
+<2-6-1>
+
+import time
+from machine import UART,Timer
+from fpioa_manager import fm
+
+fm.register(7, fm.fpioa.UART1_RX, force=True)
+fm.register(6, fm.fpioa.UART1_TX, force=True)
+
+uart = UART(UART.UART1, 115200, read_buf_len=4096)
+
+cnt = 0
+while True:
+    uart.write('Hello'+str(cnt)+"\n")
+    cnt = cnt + 1
+    time.sleep(1.0)
