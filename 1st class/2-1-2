@@ -1,0 +1,22 @@
+<2-1-2>
+
+import time
+from maix import GPIO
+from fpioa_manager import fm
+from board import board_info
+
+#pin mapping
+#use IO11 pin as GPIO0 function and IO15 pin as GPIO1 function
+#force the function to be set
+fm.register(11, ________________, ____________)
+fm.register(15, ________________, ____________)
+
+#set up the GPIO pin as a output mode
+led_1 = GPIO(GPIO.GPIO0, ___________)
+led_2 = GPIO(GPIO.GPIO1, ___________)
+
+while True:
+    #turns two LEDs on and off every second
+    led_1.value(__)
+    led_2.value(__)
+    time.sleep(__)
