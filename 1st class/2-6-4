@@ -1,0 +1,36 @@
+<2-6-4>
+
+import time
+from machine import UART,Timer
+from fpioa_manager import fm
+from maix import GPIO, utils
+
+#시리얼통신 설정
+fm.register(7, fm.fpioa.UART1_RX, force=True)
+fm.register(6, fm.fpioa.UART1_TX, force=True)
+
+uart = UART(UART.UART1, 115200, read_buf_len=4096)
+
+#LED핀 설정
+fm.register(11, fm.fpioa.GPIO0, force=True)
+fm.register(15, fm.fpioa.GPIO1, force=True)
+
+led_1 = GPIO(GPIO.GPIO0, GPIO.OUT)
+led_2 = GPIO(GPIO.GPIO1, GPIO.OUT)
+
+while True:
+    try:
+        if uart.any():
+            text=uart.read()
+            in_text = text.decode('utf-8')
+            if "on" in in_text:
+                print("led on")
+                led_1.value(1)
+                led_2.value(1)
+            elif "off" in in_text:
+                print("led off")
+                led_1.value(0)
+                led_2.value(0)
+
+    except:
+        pass
