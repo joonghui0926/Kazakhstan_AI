@@ -1,0 +1,40 @@
+import time
+from maix import GPIO
+from fpioa_manager import fm
+
+
+fm.register(8, fm.fpioa.GPIO0, force=True)
+fm.register(9, fm.fpioa.GPIO1, force=True)
+fm.register(11, fm.fpioa.GPIO2, force=True)
+fm.register(10, fm.fpioa.GPIO3, force=True)
+
+button_1 = GPIO(GPIO.GPIO0, GPIO.IN, GPIO.PULL_UP)
+button_2 = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
+button_3 = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
+button_4 = GPIO(GPIO.GPIO3, GPIO.IN, GPIO.PULL_UP)
+
+while True:
+    
+    curr_button_1 = button_1.value()
+    //
+   
+    # Print the message "button_1" when the first button is pressed #
+        time.sleep(0.1)
+
+    curr_button_2 = button_2.value()
+    //
+    
+    # Print the message "button_2" when the second button is pressed #
+        time.sleep(0.1)
+
+    curr_button_3 = button_3.value()
+    //
+  
+    # Print the message "button_3" when the third button is pressed #
+        time.sleep(0.1)
+
+    curr_button_4 = button_4.value()
+    //
+   
+    # Print the message "button_4" when the fourth button is pressed #
+        time.sleep(0.1)
