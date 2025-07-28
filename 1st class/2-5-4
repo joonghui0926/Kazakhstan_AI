@@ -1,0 +1,75 @@
+<2-5-4>
+
+import time
+from maix import GPIO
+from fpioa_manager import fm
+from board import board_info
+from machine import Timer, PWM
+
+tim0 = Timer(Timer.TIMER0, Timer.CHANNEL0, mode=Timer.MODE_PWM)
+tim1 = Timer(Timer.TIMER0, Timer.CHANNEL1, mode=Timer.MODE_PWM)
+tim2 = Timer(Timer.TIMER0, Timer.CHANNEL2, mode=Timer.MODE_PWM)
+tim3 = Timer(Timer.TIMER0, Timer.CHANNEL3, mode=Timer.MODE_PWM)
+
+left_ia = PWM(tim0, freq=2000, duty=0, pin=13)
+left_ib = PWM(tim1, freq=2000, duty=0, pin=19)
+right_ia = PWM(tim2, freq=2000, duty=0, pin=10)
+right_ib = PWM(tim3, freq=2000, duty=0, pin=17)
+
+#create functions to move the robot forward, backward, turn left, turn right
+def car_go(speed):
+    left_ia.duty(0)
+    left_ib.duty(speed)
+    right_ia.duty(speed)
+    right_ib.duty(0)
+
+def car_back(speed):
+    ______________
+    ______________
+    ______________
+    ______________
+
+def car_left(speed):
+    left_ia.duty(speed)
+    left_ib.duty(0)
+    right_ia.duty(speed)
+    right_ib.duty(0)
+
+def car_right(speed):
+    ______________
+    ______________
+    ______________
+    ______________
+
+while True:
+    print("go")
+    car_go(50)
+    time.sleep(1.0)
+
+    print("stop")
+    car_go(0)
+    time.sleep(0.5)
+
+    print("back")
+    car_back(50)
+    time.sleep(1.0)
+
+    print("stop")
+    car_go(0)
+    time.sleep(0.5)
+
+    print("left")
+    car_left(50)
+    time.sleep(1.0)
+
+    print("stop")
+    car_go(0)
+    time.sleep(0.5)
+
+    print("right")
+    car_right(50)
+    time.sleep(1.0)
+
+    print("stop")
+    car_go(0)
+    time.sleep(0.5)
