@@ -1,0 +1,26 @@
+import time
+from machine import UART,Timer
+from fpioa_manager import fm
+
+fm.register(7, fm.fpioa.UART1_RX, force=True)
+fm.register(6, fm.fpioa.UART1_TX, force=True)
+
+uart = UART(UART.UART1, 115200, read_buf_len=4096)
+
+change_name = "daduino"
+
+while True:
+    uart.write('AT+NAME'+change_name+"\r\n")
+    time.sleep(2.0)
+
+    try:
+        if uart.any():
+            text=uart.read()
+            in_text = text.decode('utf-8')
+            print(in_text)
+            if "OK" in in_text:
+                break
+    except:
+        pass
+
+print("이름 변경이 완료되었습니다")
