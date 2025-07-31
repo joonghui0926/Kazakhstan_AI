@@ -1,0 +1,64 @@
+import sensor, lcd
+import time
+from maix import GPIO
+from fpioa_manager import fm
+import os
+
+
+sensor.reset()
+sensor.set_vflip(1)
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QVGA)
+sensor.run(1)
+sensor.skip_frames()
+lcd.init(freq=15000000)
+fps_clock = time.clock()
+
+
+class_path = "/sd/Classification"
+class1_path = class_path + "/class1"
+class2_path = class_path + "/class2"
+class3_path = class_path + "/class3"
+try:
+    os.mkdir(class_path)
+    os.mkdir(class1_path)
+    os.mkdir(class2_path)
+    os.mkdir(class3_path)
+except:
+    pass
+
+
+fm.register(9, fm.fpioa.GPIO0, force=True)
+fm.register(12, fm.fpioa.GPIO1, force=True)
+fm.register(8, fm.fpioa.GPIO2, force=True)
+
+button_1 = GPIO(GPIO.GPIO0, GPIO.IN, GPIO.PULL_UP)
+button_2 = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
+button_3 = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
+
+class_1_cnt = 0
+class_2_cnt = 0
+class_3_cnt = 0
+while(True):
+    img = sensor.snapshot()
+
+    if button_1.value() == 0:
+        img.save(class1_path+"/"+str(class_1_cnt)+".jpg")
+        class_1_cnt += 1
+        img.draw_string(50, 120, "save class1:"+str(class_1_cnt),color=(0,255,0),scale=2)
+        lcd.display(img)
+        time.sleep(0.5)
+    elif button_2.value() == 0:
+        img.save(class2_path+"/"+str(class_2_cnt)+".jpg")
+        class_2_cnt += 1
+        img.draw_string(50, 120, "save class2:"+str(class_2_cnt),color=(0,255,0),scale=2)
+        lcd.display(img)
+        time.sleep(0.5)
+    elif button_3.value() == 0:
+        img.save(class3_path+"/"+str(class_3_cnt)+".jpg")
+        class_3_cnt += 1
+        img.draw_string(50, 120, "save class3:"+str(class_3_cnt),color=(0,255,0),scale=2)
+        lcd.display(img)
+        time.sleep(0.5)
+    lcd.display(img)
+
