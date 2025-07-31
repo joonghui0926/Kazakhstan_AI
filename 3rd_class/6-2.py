@@ -45,25 +45,19 @@ kpu.init_yolo2(anchor, anchor_num=5, img_w=320, img_h=240, net_w=320 , net_h=256
 
 while True:
     clock.tick()                        # update the frame speed 프레임 속도 계산 업데이트
-    img = sensor.snapshot()             # bring the picture 촬영하여 이미지 가져오기
-    od_img.draw_image(img, 0,0)     # draw the img at (0,0) 이미지를 od_img 이미지의 (0,0) 위치에 그립니다.
+    img = #sensor.snapshot()             # bring the picture 촬영하여 이미지 가져오기
+    od_img.draw_image(img, 0,0)     # draw the image at (0,0) 이미지를 od_img 이미지의 (0,0) 위치에 그립니다.
     od_img.pix_to_ai()                  # change the image to fit the model rgb565 이미지를 AI 연산에 필요한 r8g8b8 형식으로 변환
     kpu.run_with_output(od_img)         # caluate the input image 입력 이미지에 KPU 연산 수행
-    dect = kpu.regionlayer_yolo2()      # process it after YOLO2 YOLO2 후 처리
-    fps = clock.fps()                   # bring FPS FPS 가져오기
+    dect = #kpu.regionlayer_yolo2()      # process it after YOLO2 YOLO2 후 처리
+    fps = #clock.fps()                   # bring FPS  FPS 가져오기
+    print(dect)
 
-    # draw boundary box and present class of object 박스 그리기 및 객체 클래스 표시
-    if len(dect) > 0:
-        print("dect:",dect)
-        for l in dect :
-            img.draw_rectangle(l[0],l[1],l[2],l[3], color=(0, 255, 0))
-            img.draw_string(l[0],l[1], obj_name[l[4]], color=(0, 255, 0), scale=1.5)
-
-    img.draw_string(0, 0, "%2.1ffps" %(fps), color=(0, 60, 128), scale=1.0)
     lcd.display(img)
+
     gc.collect()
 
 # KPU 객체 초기화 및 모델 메모리 해제
 kpu.deinit()
 
-# 검출한 객체 표시하기
+# 검출한 객체 출력하기
