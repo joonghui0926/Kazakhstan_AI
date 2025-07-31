@@ -1,0 +1,64 @@
+import sensor, image, time, lcd
+from maix import KPU
+from machine import Timer, PWM
+import gc
+
+lcd.init()
+sensor.reset()
+sensor.set_vflip(1)
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QVGA)
+sensor.skip_frames(time=2000)
+clock = time.clock()
+
+kpu = KPU()
+kpu.load_kmodel("/sd/Classification/my_classfication.kmodel")
+
+img_proc = image.Image(size=(224, 224), copy_to_fb=False)
+
+class_name = ["train","Motorcycles","ship"]
+
+#부저
+tim = Timer(Timer.TIMER0, Timer.CHANNEL0, mode=Timer.MODE_PWM)
+buzzer = PWM(tim, freq=1, duty=50, pin=14)
+
+# 긴급 알림음을 위한 주파수 설정
+emergency_notes = [900,1200]
+
+def play_tone(frequency):
+    buzzer.duty(50)
+    buzzer.freq(frequency)
+
+def no_tone():
+    buzzer.duty(0)
+
+no_tone()
+time.sleep(1.0)
+
+cnt = 0
+while True:
+    gc.collect()
+    img = sensor.snapshot()
+    img_proc.draw_image(img, 0,0)
+    img_proc.pix_to_ai()
+
+    out = kpu.run_with_output(img_proc, getlist=True)
+    max_choice = max(out)
+    index = out.index(max_choice)
+
+    print(class_name[index])
+    img.draw_string(4,3,class_name[index],color=(0,0,0),scale=2)
+
+    if class_name[index] == "Motorcycles":
+        if cnt >= 10:
+            for note in emergency_notes:
+                play_tone(note)
+                time.sleep(0.3)
+        else:
+            cnt += 1
+    else:
+        no_tone()
+        cnt = 0
+    lcd.display(img)
+
+kpu.deinit()
