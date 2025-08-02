@@ -1,0 +1,53 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+
+# User-selected hyperparameters (You can change these values)
+pooling_choice = 'max'      # Options: 'max', 'avg', 'global'
+num_filters = 32            # Options: 16, 32, 64, 128, 256
+stride = 1                  # Options: 1, 2, 3, 4, 5
+padding = 'same'            # Options: 'valid', 'same'
+num_epochs = 3              # Options: 1, 2, 3, 4, 5
+
+# Load and preprocess the MNIST dataset
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train = x_train[..., tf.newaxis] / 255.0  # Normalize and add channel dimension
+x_test = x_test[..., tf.newaxis] / 255.0
+y_train = to_categorical(y_train)           # One-hot encode labels
+y_test = to_categorical(y_test)
+
+# Build the CNN model
+model = models.Sequential()
+
+# Add a convolutional layer with user-selected filter, stride, and padding
+model.add(layers.Conv2D(num_filters, kernel_size=(3, 3), strides=(stride, stride), 
+                        padding=padding, activation='relu', input_shape=(28, 28, 1)))
+
+# Add a pooling layer based on user's choice
+if pooling_choice == 'max':
+    model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+elif pooling_choice == 'avg':
+    model.add(layers.AveragePooling2D(pool_size=(2, 2)))
+elif pooling_choice == 'global':
+    model.add(layers.GlobalAveragePooling2D())
+else:
+    raise ValueError("pooling_choice must be one of: 'max', 'avg', 'global'")
+
+# Flatten the output if pooling is not global
+if pooling_choice != 'global':
+    model.add(layers.Flatten())
+
+# Add dense layers for classification
+model.add(layers.Dense(128, activation='relu'))
+model.add(layers.Dense(10, activation='softmax'))  # 10 classes for MNIST
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(x_train, y_train, epochs=num_epochs, batch_size=64, validation_split=0.1)
+
+# Evaluate the model on test data
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f"Test accuracy: {test_acc:.4f}")
