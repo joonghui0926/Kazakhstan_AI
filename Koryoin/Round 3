@@ -1,0 +1,151 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from IPython.display import display
+
+# Load datasets (replace with your own path if in Colab)
+dirty_data = pd.read_csv("/content/round1_dirty_dataset.csv")
+clean_data = pd.read_csv("/content/Round_1_clean_dataset_sample.csv")
+
+# Preprocessing function
+def preprocess(df):
+    df = df.copy()
+    df = df.drop(columns=['ID'])  # Remove ID
+    df = df.apply(pd.to_numeric, errors='coerce').fillna(0)  # 숫자로 변환 + 숫자 아닌 값 0으로
+    X = df.drop(columns=['Health_Index'])
+    y = df['Health_Index']
+    return X, y
+
+X_dirty, y_dirty = preprocess(dirty_data)
+X_clean, y_clean = preprocess(clean_data)
+
+# Train-test split
+X_dirty_train, X_dirty_test, y_dirty_train, y_dirty_test = train_test_split(X_dirty, y_dirty, test_size=0.2, random_state=42)
+X_clean_train, X_clean_test, y_clean_train, y_clean_test = train_test_split(X_clean, y_clean, test_size=0.2, random_state=42)
+
+# Model training
+model_dirty = LinearRegression()
+model_dirty.fit(X_dirty_train, y_dirty_train)
+pred_dirty = model_dirty.predict(X_dirty_test)
+
+model_clean = LinearRegression()
+model_clean.fit(X_clean_train, y_clean_train)
+pred_clean = model_clean.predict(X_clean_test)
+
+# Evaluation
+rmse_dirty = np.sqrt(mean_squared_error(y_dirty_test, pred_dirty))
+r2_dirty = r2_score(y_dirty_test, pred_dirty)
+
+rmse_clean = np.sqrt(mean_squared_error(y_clean_test, pred_clean))
+r2_clean = r2_score(y_clean_test, pred_clean)
+
+# Boxplot fix
+def clean_for_boxplot(df):
+    df_fixed = df.copy()
+    for col in ['Age', 'Height_cm', 'Weight_kg', 'Income', 'Satisfaction', 'Health_Index']:
+        df_fixed[col] = pd.to_numeric(df_fixed[col], errors='coerce').fillna(0)  # 숫자 아닌 값 0으로
+    return df_fixed
+
+dirty_data_fixed = clean_for_boxplot(dirty_data)
+clean_data_fixed = clean_for_boxplot(clean_data)
+
+#score compute
+def evaluate_cleaning(dirty_df, clean_df, rmse_dirty, rmse_clean, r2_dirty, r2_clean):
+    columns = ['Age', 'Height_cm', 'Weight_kg', 'Income', 'Satisfaction', 'Health_Index']
+    outlier_improvement = []
+
+    for col in columns:
+        d = pd.to_numeric(dirty_df[col], errors='coerce').fillna(0)
+        c = pd.to_numeric(clean_df[col], errors='coerce').fillna(0)
+
+        if len(d) == 0 or len(c) == 0:
+            outlier_improvement.append(0)
+            continue
+
+        q1, q3 = np.percentile(d, [25, 75])
+        iqr = q3 - q1
+        lower, upper = q1 - 1.5*iqr, q3 + 1.5*iqr
+
+        dirty_outliers = ((d < lower) | (d > upper)).mean()
+        clean_outliers = ((c < lower) | (c > upper)).mean()
+
+        improvement = (dirty_outliers - clean_outliers) * 100
+        outlier_improvement.append(improvement)
+
+    outlier_score = max(0, np.mean(outlier_improvement))
+
+    rmse_improve = max(0, (rmse_dirty - rmse_clean) / rmse_dirty * 100)
+    r2_improve = max(0, (r2_clean - r2_dirty) * 100)
+
+    final_score = (outlier_score * 0.5) + (rmse_improve * 0.3) + (r2_improve * 0.2)
+
+    return {
+        'Outlier Improvement (%)': round(np.mean(outlier_improvement),2),
+        'RMSE Improvement (%)': round(rmse_improve,2),
+        'R² Improvement (×100)': round(r2_improve,2),
+        'Final Score (0~100)': round(final_score,2)
+    }
+
+
+# Boxplot comparison
+fig, axs = plt.subplots(2, 3, figsize=(15, 8))
+columns = ['Age', 'Height_cm', 'Weight_kg', 'Income', 'Satisfaction', 'Health_Index']
+
+for i, col in enumerate(columns):
+    ax = axs[i//3, i%3]
+    ax.boxplot([dirty_data_fixed[col].dropna(), clean_data_fixed[col].dropna()], labels=['Dirty', 'Clean'])
+    ax.set_title(col)
+
+plt.suptitle('Boxplot Comparison: Dirty vs Clean Data')
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.show()
+
+results = {
+    "Dataset": ["Dirty Data", "Clean Data"],
+    "RMSE": [round(rmse_dirty, 2), round(rmse_clean, 2)],
+    "R²": [round(r2_dirty, 2), round(r2_clean, 2)]
+}
+
+results_df = pd.DataFrame(results)
+
+# 인덱스 없이 출력 (reset index + drop)
+results_df_no_idx = results_df.reset_index(drop=True)
+
+# 스타일 적용
+styled = results_df_no_idx.style.set_caption("Regression Performance Comparison") \
+    .format({"RMSE": "{:.2f}", "R²": "{:.2f}"}) \
+    .set_table_styles([{
+        'selector': 'caption',
+        'props': [('font-size', '16px'), ('font-weight', 'bold')]
+    }])
+
+display(styled)
+
+def show_cleaning_score(mse_dirty, mse_clean):
+    mse_improve_ratio = max(0, (mse_dirty - mse_clean) / mse_dirty)
+    final_score = round(mse_improve_ratio * 100, 2)
+
+    result_df = pd.DataFrame({
+        "Metric": ["MSE (Dirty)", "MSE (Clean)", "Improvement (%)", "Final Score (0~100)"],
+        "Value": [round(mse_dirty, 2), round(mse_clean, 2), round(mse_improve_ratio * 100, 2), final_score]
+    })
+
+    # 이쁜 스타일
+    styled = result_df.style.set_caption("Data Cleaning Performance Summary") \
+        .format({"Value": "{:.2f}"}) \
+        .set_table_styles([
+            {'selector': 'caption', 'props': [('font-size', '18px'), ('font-weight', 'bold'), ('text-align', 'center'), ('color', '#0067a3')]},
+            {'selector': 'th', 'props': [('background-color', '#222222'), ('color', 'white'), ('font-size', '14px'), ('text-align', 'center')]},
+            {'selector': 'td', 'props': [('text-align', 'center'), ('font-size', '13px')]}
+        ]) \
+        .apply(lambda x: ['background-color: #ffdddd' if v==max(x) else 'background-color: #ddffdd' if v==min(x) else '' for v in x] if x.name == 'Value' else ['' for _ in x], axis=1)
+
+    display(styled)
+
+mse_dirty = mean_squared_error(y_dirty_test, pred_dirty)
+mse_clean = mean_squared_error(y_clean_test, pred_clean)
+
+show_cleaning_score(mse_dirty, mse_clean)
