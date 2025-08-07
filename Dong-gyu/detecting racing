@@ -14,6 +14,8 @@ sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)          # 320×240
 sensor.skip_frames(time=1000)
 clock = time.clock()
+od_img = image.Image(size=(224,224), copy_to_fb=False)
+
 
 # YOLO 앵커
 anchor = (0.8125, 0.4556, 1.1328, 1.2667,
@@ -22,14 +24,19 @@ anchor = (0.8125, 0.4556, 1.1328, 1.2667,
 
 # KPU & YOLO 초기화
 kpu = KPU()
-kpu.load_kmodel("/sd/model/hand_detect.kmodel")
-kpu.init_yolo2(anchor,
-               anchor_num=5,
-               img_w=320, img_h=240,
-               net_w=320, net_h=240,    # 256 → 240
-               layer_w=10, layer_h=8,
-               threshold=0.7, nms_value=0.3,
-               classes=1)
+kpu.load_kmodel("/sd/object_detection/object_detection") # 모델 만들기 필요 (표지판)
+#kpu.init_yolo2(anchor,
+               #anchor_num=5,
+               #img_w=320, img_h=240,
+               #net_w=320, net_h=240,    # 256 → 240
+               #layer_w=10, layer_h=8,
+               #threshold=0.7, nms_value=0.3,
+               #classes=1)
+
+kpu.init_yolo2(anchor, anchor_num=5, img_w=320, img_h=240, net_w=224 , net_h=224 ,layer_w=7 ,layer_h=7, threshold=0.4, nms_value=0.3, classes=4)
+
+labels = ['Crosswalks','slow','stop', 'human']
+
 
 # ── 모터 PWM 설정 ──────────────────────────────────────────────────────
 tim0 = Timer(Timer.TIMER0, Timer.CHANNEL0, mode=Timer.MODE_PWM)
@@ -54,46 +61,25 @@ try:
     while True:
         clock.tick()
         img = sensor.snapshot()
-        img.pix_to_ai()                          # od_img 제거, img 직접 사용
-        kpu.run_with_output(img)
+        od_img.draw_image(img, 0,0)
+        od_img.pix_to_ai()
+        kpu.run_with_output(od_img)
         dect = kpu.regionlayer_yolo2()
-        fps  = clock.fps()
+        fps = clock.fps()
 
         if len(dect) > 0:
+            print("dect:",dect)
             for l in dect:
-                x = int(l[0] + l[2] / 2)
-                y = int(l[1] + l[3] / 2)
-                img.draw_cross(x, y, color=(255, 0, 0))
-                img.draw_rectangle(l[0], l[1], l[2], l[3], color=(0, 255, 0))
-                print("x:{}  y:{}".format(x, y))
+                img.draw_rectangle(int(l[0]/1.4),l[1],int(l[2]/1.4),l[3], color=(0, 255, 0))
+                img.draw_string(int(l[0]/1.4),l[1], labels[l[4]], color=(255,0,0),scale=1.5)
 
-                # 핸드 위치에 따른 조향
-                if x < 100:
-                    print("left")
-                    car_left(50)
-                elif x > 200:
-                    print("right")
-                    car_right(50)
+                /blank/
 
-            del dect                               # 참조 해제
 
-        # FPS·디스플레이
-        img.draw_string(0, 0, "%2.1ffps" % fps, color=(0, 60, 128), scale=2.0)
+
+
+        img.draw_string(0, 0, "%2.1ffps" %(fps), color=(0, 60, 128), scale=2.0)
         lcd.display(img)
-
-        # 1 초마다 정지
-        current_time = time.ticks_ms()
-        if current_time - last_time >= 1000:
-            print("stop")
-            car_go(0)
-            last_time = current_time
-
-        del img                                    # 이미지 참조 해제
-        if gc.mem_free() < 80 * 1024:              # 여유 80 KB 미만이면 GC
-            gc.collect()
-
-except Exception as e:
-    print("Error:", e)
-
+        gc.collect()
 finally:
     kpu.deinit()
